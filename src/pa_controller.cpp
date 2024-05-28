@@ -32,11 +32,18 @@ int main()
 
     spi_set_format(spi0,8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
-    PSU psu_1 = PSU(2, 3);
-    PSU psu_2 = PSU(6, 7);
-    PSU psu_3 = PSU(10, 11);
-    PSU psu_4 = PSU(12, 13);
-    PSU psu_5 = PSU(14, 15);
+    LED led_17 = LED(21);
+    LED led_18 = LED(22);
+    LED led_19 = LED(26);
+    LED led_20 = LED(27);
+    LED led_21 = LED(28);
+    
+    PSU psu_1 = PSU(2, 11);
+    PSU psu_2 = PSU(3, 12);
+    PSU psu_3 = PSU(6, 13);
+    PSU psu_4 = PSU(7, 14);
+    PSU psu_5 = PSU(10, 15);
+
     M24M02 m24m02 = M24M02(i2c0, EEPROM_ADDR);
     ADC adc = ADC();
     DS1682 ds1682 = DS1682(i2c0, DS1682_ADDR);
@@ -48,7 +55,47 @@ int main()
                                             , m24m02, adc, ds1682, ina3221_1, ina3221_2, ads8166);
 
     while (true) {
+        if (psu_1.pa_power_state())
+        {
+            led_17.LED_on();
+        }
+        if (psu_2.pa_power_state())
+        {
+            led_18.LED_on();
+        }
+        if (psu_3.pa_power_state())
+        {
+            led_19.LED_on();
+        }
+        if (psu_4.pa_power_state())
+        {
+            led_20.LED_on();
+        }
+        if (psu_5.pa_power_state())
+        {
+            led_21.LED_on();
+        }
         printf("Hello, world!\n");
-        sleep_ms(1000);
+ 
+        if (psu_1.pa_status())
+        {
+            led_17.LED_off();
+        }
+        if (psu_2.pa_status())
+        {
+            led_18.LED_off();
+        }
+        if (psu_3.pa_status())
+        {
+            led_19.LED_off();
+        }
+        if (psu_4.pa_status())
+        {
+            led_20.LED_off();
+        }
+        if (psu_5.pa_status())
+        {
+            led_21.LED_off();
+        }
     }
 }
