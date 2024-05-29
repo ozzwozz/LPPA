@@ -57,23 +57,23 @@ class UART_Handler
         ~UART_Handler();
 
         /// @brief Write to UART_Handler
-        /// @param data 
+        /// @param data data to write to UART
         void write(const char *data);
 
         /// @brief Write to UART_Handler
-        /// @param data 
-        /// @param len 
+        /// @param data data to write to UART
+        /// @param len length of the data
         void write(const char *data, size_t len);
 
         /// @brief Read from UART_Handler
-        /// @param data 
-        /// @param len 
-        /// @return size_t 
+        /// @param data object to store data from UART
+        /// @param len length of the data expected
+        /// @return size_t size of the data read
         size_t read(char *data, size_t len);
 
         /// @brief Check if UART_Handler is available to interact with
-        /// @return int 
-        int available();
+        /// @return true if available 
+        bool available();
 
         /// @brief flush the Rx buffer
         void flush_rx();
@@ -89,35 +89,32 @@ class UART_Handler
         /// @param m_uart uart instance
         uart_inst_t *m_uart;
 
-        /// @param m_m24m02 M24M02 object
-        M24M02 m_m24m02;
-        /// @param m_ds1682 DS1682 object
-        DS1682 m_ds1682;
+        /// @param m_m24m02 M24M02 object - EEPROM
+        M24M02 &m_m24m02;
+        /// @param m_ds1682 DS1682 object - ETR
+        DS1682 &m_ds1682;
 
-        /// @param m_ina3221_1 INA3221A object
-        INA3221A m_ina3221_1;
-        /// @param m_ina3221_2 INA3221A object
-        INA3221A m_ina3221_2;
+        /// @param m_ina3221_1 INA3221A object - Shunt and Bus Monitor 
+        INA3221A &m_ina3221_1;
+        /// @param m_ina3221_2 INA3221A object - Shunt and Bus Monitor
+        INA3221A &m_ina3221_2;
 
-        /// @param m_ads8166 ADS8166IRHBT object
-        ADS8166IRHBT m_ads8166;
+        /// @param m_ads8166 ADS8166IRHBT object - 8 Channel ADC for Temperature Sensing
+        ADS8166IRHBT &m_ads8166;
 
-        /// @param m_psu_1 PSU object
-        PSU m_psu_1;
-        /// @param m_psu_2 PSU object
-        PSU m_psu_2;
-        /// @param m_psu_3 PSU object
-        PSU m_psu_3;
-        /// @param m_psu_4 PSU object
-        PSU m_psu_4;
-        /// @param m_psu_5 PSU object
-        PSU m_psu_5;
+        /// @param m_psu_1 PSU object - Power enable and shutdown
+        PSU &m_psu_1;
+        /// @param m_psu_2 PSU object - Power enable and shutdown
+        PSU &m_psu_2;
+        /// @param m_psu_3 PSU object - Power enable and shutdown
+        PSU &m_psu_3;
+        /// @param m_psu_4 PSU object - Power enable and shutdown
+        PSU &m_psu_4;
+        /// @param m_psu_5 PSU object - Power enable and shutdown
+        PSU &m_psu_5;
 
-        /// @param m_adc ADC object
-        ADC m_adc;
-
-        /// @param m_ext_trig_pin External trigger pin
-        uint m_ext_trig_pin;
+        /// @param m_adc ADC object - ADC Pins 
+        ADC &m_adc;
         
         /// @param m_rx_pin rx pin
         uint m_rx_pin;
@@ -128,53 +125,47 @@ class UART_Handler
         /// @param tx_buffer_ tx buffer queue
         std::queue<std::vector<char>> tx_buffer_;
 
-        /// @brief Handler for the EXT_TRIG/GPIO15 interrupt
-        /// @param context 
-        static void ext_trig_irq_handler(void *context);
-
         /// @brief Interrupt handler for when data is recieved
-        /// @param context 
+        /// @param context pointer to calling instance.
         static void uart_irq_handler(void *context);
 
         /// @brief Parse the received message
         void decode_message();
 
         /// @brief Set the psu power status
-        /// @param response  
         /// @param data 
-        void set_psu(std::vector<char>& response, char* data);
+        void set_psu(char* data);
 
         /// @brief Get the current psu power status
-        /// @param response 
-        /// @param band_mask
+        /// @param response response passed as object to be built in function
+        /// @param band_mask bit mask for the bands to get information about 
         void get_psu(std::vector<char>& response, uint8_t band_mask);
 
         /// @brief Set the bands for which PA is enabled/disabled
-        /// @param response 
-        /// @param data  
-        void set_pa_enable(std::vector<char>& response, char* data);
+        /// @param data value to set the PA to 
+        void set_pa_enable(char* data);
         
-        /// @brief Get te bands on which PA is enabled
-        /// @param response 
+        /// @brief Get the bands on which PA is enabled
+        /// @param response response passed as object to be built in function
         void get_pa_enable(std::vector<char>& response);
 
         /// @brief Set the characterisation table on the EEPROM 
-        /// @param data 
+        /// @param data value to set the PA to
         void set_characterisation(char* data);
 
         /// @brief Get the current characterisation table on the EEPROM
-        /// @param response 
+        /// @param response response passed as object to be built in function
         void get_characterisation(std::vector<char>& response);
 
-        /// @brief A list of the attenuator stage bits
-        /// @param response 
+        /// @brief A list of the PA stage bits
+        /// @param response response passed as object to be built in function
         void get_bits(std::vector<char>& response);
 
-        /// @brief A list of the attenuator stage harder numbers
-        /// @param response 
+        /// @brief A list of the PA stage hardware numbers
+        /// @param response response passed as object to be built in function
         void get_hardware_numbers(std::vector<char>& response);
 
-        /// @brief A list of the attenuator stage software numbers
-        /// @param response 
+        /// @brief A list of the PA stage software numbers
+        /// @param response response passed as object to be built in function
         void get_software_numbers(std::vector<char>& response);
 };

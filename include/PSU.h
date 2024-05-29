@@ -16,9 +16,9 @@ class PSU
     public:
         /// @brief PSU Class Constructor
         /// @param enable_pin 
-        /// @param m_shutdown_pin 
-        PSU(uint enable_pin, uint m_shutdown_pin);
-        /// @brief PSU Class Desctructor
+        /// @param shutdown_pin 
+        PSU(uint enable_pin, uint shutdown_pin);
+        /// @brief PSU Class Destructor
         ~PSU();
 
         /// @brief enable the PA
@@ -26,12 +26,13 @@ class PSU
         /// @brief disable the PA
         void pa_disable();
         /// @brief status of the PA
+        /// @return enabled is true
         bool pa_status();
         /// @brief shutdown the PA
         void pa_shutdown();
         /// @brief Allow the PA to be turned on
         void pa_turn_on();
-        /// @brief check teh power state of the PA
-        /// @return 
+        /// @brief check the power state of the PA
+        /// @return turned on is true
         bool pa_power_state();
 };

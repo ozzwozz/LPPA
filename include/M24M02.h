@@ -9,8 +9,8 @@ class M24M02 : public I2CDevice
 {
     public:
         /// @brief Construct a new M24M02 object
-        /// @param i2c 
-        /// @param address 
+        /// @param i2c i2c instance
+        /// @param address EEPROM device address
         M24M02(i2c_inst_t *i2c, uint8_t address);
 
         /// @brief Destroy the M24M02 object

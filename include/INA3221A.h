@@ -16,11 +16,11 @@ class INA3221A : I2CDevice
         const uint8_t shunt_channel_2_addr = 0x03;
         /// @param shunt_channel_3_addr Register address of the shunt voltage for channel 3
         const uint8_t shunt_channel_3_addr = 0x05;
-        /// @param shunt_channel_1_addr Register address of the shunt voltage for channel 1
+        /// @param bus_channel_1_addr Register address of the shunt voltage for channel 1
         const uint8_t bus_channel_1_addr = 0x02;
-        /// @param shunt_channel_2_addr Register address of the shunt voltage for channel 2
+        /// @param bus_channel_2_addr Register address of the shunt voltage for channel 2
         const uint8_t bus_channel_2_addr = 0x04;
-        /// @param shunt_channel_3_addr Register address of the shunt voltage for channel 3
+        /// @param bus_channel_3_addr Register address of the shunt voltage for channel 3
         const uint8_t bus_channel_3_addr = 0x06;
 
     public:
@@ -28,7 +28,7 @@ class INA3221A : I2CDevice
         /// @param i2c i2c instance
         /// @param device_address Device address
         INA3221A(i2c_inst_t* i2c, uint device_address);
-        /// @brief INA3221A Class Destrucor
+        /// @brief INA3221A Class Destructor
         ~INA3221A();
 
         /// @brief read all shunt voltages

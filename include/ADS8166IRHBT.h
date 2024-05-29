@@ -4,11 +4,9 @@
 #include "SPIDevice.h"
 
 /// @class ADS8166IRHBT
-/// @brief ADS8166IRHBT Driver for being used for temperature sensing
+/// @brief ADS8166IRHBT Driver for temperature sensing
 class ADS8166IRHBT : public SPIDevice
 {
-    private:
-        
     public:
         /// @brief ADS8166IRHBT Class Constructor
         /// @param spi_inst spi instance
