@@ -18,6 +18,7 @@ bool M24M02::read(const uint32_t address, uint8_t *data, size_t len)
         return false;
     }
 
+    // Read returned data
     if (!I2CDevice::read(data, len))
     {
         return false;

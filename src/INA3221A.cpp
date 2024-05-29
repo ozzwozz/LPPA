@@ -10,10 +10,7 @@ INA3221A::~INA3221A()
 
 bool INA3221A::get_shunt_voltages(std::vector<uint16_t> &voltage)
 {
-    uint8_t buffer[6];
-    buffer[0] = shunt_channel_1_addr;
-    buffer[1] = shunt_channel_2_addr;
-    buffer[2] = shunt_channel_3_addr;
+    uint8_t buffer[6] = {shunt_channel_1_addr, shunt_channel_2_addr, shunt_channel_3_addr};
 
     // Send shunt address
     if (!I2CDevice::write(buffer, sizeof(buffer)))
@@ -35,11 +32,8 @@ bool INA3221A::get_shunt_voltages(std::vector<uint16_t> &voltage)
 
 bool INA3221A::get_bus_voltages(std::vector<uint16_t> &voltage)
 {
-    uint8_t buffer[6];
-    buffer[0] = bus_channel_1_addr;
-    buffer[1] = bus_channel_2_addr;
-    buffer[2] = bus_channel_3_addr;
-
+    uint8_t buffer[6] = {bus_channel_1_addr, bus_channel_2_addr, bus_channel_3_addr};
+    
     // Send bus address
     if (!I2CDevice::write(buffer, sizeof(buffer)))
     {
