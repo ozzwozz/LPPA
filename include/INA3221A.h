@@ -16,11 +16,11 @@ class INA3221A : I2CDevice
         const uint8_t shunt_channel_2_addr = 0x03;
         /// @param shunt_channel_3_addr Register address of the shunt voltage for channel 3
         const uint8_t shunt_channel_3_addr = 0x05;
-        /// @param bus_channel_1_addr Register address of the shunt voltage for channel 1
+        /// @param bus_channel_1_addr Register address of the bus voltage for channel 1
         const uint8_t bus_channel_1_addr = 0x02;
-        /// @param bus_channel_2_addr Register address of the shunt voltage for channel 2
+        /// @param bus_channel_2_addr Register address of the bus voltage for channel 2
         const uint8_t bus_channel_2_addr = 0x04;
-        /// @param bus_channel_3_addr Register address of the shunt voltage for channel 3
+        /// @param bus_channel_3_addr Register address of the bus voltage for channel 3
         const uint8_t bus_channel_3_addr = 0x06;
 
     public:
