@@ -13,7 +13,7 @@ ADS8166IRHBT::~ADS8166IRHBT()
 uint16_t ADS8166IRHBT::read(const uint8_t channel)
 {
     // bitwise OR to set the lower 4 bits to the channel number
-    uint8_t tx_data[2] = {0x80 | (channel << 4), 0x00};
+    uint8_t tx_data[2] {0x80 | (channel << 4), 0x00};
     uint8_t rx_data[2];
 
     exchange(tx_data, rx_data, 2);
