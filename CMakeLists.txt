@@ -84,7 +84,6 @@ set(SOURCE_FILES
 include_directories(include)
 
 # Add executable. Default name is the project name, version 0.1
-
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 
 pico_set_program_name(lpssm_controller "lpssm_controller")
