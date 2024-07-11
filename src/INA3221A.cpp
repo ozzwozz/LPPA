@@ -8,12 +8,28 @@ INA3221A::~INA3221A()
 {
 }
 
+bool INA3221A::configure()
+{
+    uint16_t config = 0b1111;
+    uint8_t command[3] {config_register, config >> 8, config};
+
+    // Send config
+    int ret = i2c_write_blocking(m_i2c, m_address, command, sizeof(buffer), true);
+    if (ret == PICO_ERROR_GENERIC)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool INA3221A::get_shunt_voltages(std::vector<uint16_t> &voltage)
 {
     uint8_t buffer[6] {shunt_channel_1_addr, shunt_channel_2_addr, shunt_channel_3_addr};
 
     // Send shunt address
-    if (!I2CDevice::write(buffer, sizeof(buffer)))
+    int ret = i2c_write_blocking(m_i2c, m_address, buffer, sizeof(buffer), true);
+    if (ret == PICO_ERROR_GENERIC)
     {
         return false;
     }
@@ -35,7 +51,8 @@ bool INA3221A::get_bus_voltages(std::vector<uint16_t> &voltage)
     uint8_t buffer[6] {bus_channel_1_addr, bus_channel_2_addr, bus_channel_3_addr};
     
     // Send bus address
-    if (!I2CDevice::write(buffer, sizeof(buffer)))
+    int ret = i2c_write_blocking(m_i2c, m_address, buffer, sizeof(buffer), true);
+    if (ret == PICO_ERROR_GENERIC)
     {
         return false;
     }

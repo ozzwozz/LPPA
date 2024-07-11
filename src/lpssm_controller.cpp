@@ -15,6 +15,13 @@
 #define SPI_SCK_PIN 18
 #define SPI_CS_PIN 17
 
+#define ADC_RESET 0
+
+// I2C defines
+#define I2C0_PORT i2c0
+#define I2C0_SDA 4
+#define I2C0_SCL 5
+
 #define EEPROM_ADDR 0x50
 #define DS1682_ADDR 0xD6
 #define INA3221A_1_ADDR 0x80
@@ -23,6 +30,13 @@
 int main()
 {
     stdio_init_all();
+
+    // I2C Initialisation. Using it at 100Khz.
+    i2c_init(I2C0_PORT, 100'000);
+    gpio_set_function(I2C0_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C0_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C0_SDA);
+    gpio_pull_up(I2C0_SCL);
 
     spi_init(spi0, 1'000'000);
     gpio_set_function(SPI_MISO_PIN, GPIO_FUNC_SPI);
