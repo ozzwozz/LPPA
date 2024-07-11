@@ -9,6 +9,8 @@
 /// @brief Driver for the INA3221A Shunt and Bus Voltage Monitor
 class INA3221A : I2CDevice
 {
+protected:
+    bool configure();
 public:
     /// @brief INA3221A Class Constructor
     /// @param i2c i2c instance
@@ -28,12 +30,15 @@ public:
     bool get_bus_voltages(std::vector<uint16_t> &voltage);
 
 private:
+    uint8_t config_register = 0x00;
+
     /// @param shunt_channel_1_addr Register address of the shunt voltage for channel 1
-    const uint8_t shunt_channel_1_addr = 0x00;
+    const uint8_t shunt_channel_1_addr = 0x01;
     /// @param shunt_channel_2_addr Register address of the shunt voltage for channel 2
     const uint8_t shunt_channel_2_addr = 0x03;
     /// @param shunt_channel_3_addr Register address of the shunt voltage for channel 3
     const uint8_t shunt_channel_3_addr = 0x05;
+    
     /// @param bus_channel_1_addr Register address of the bus voltage for channel 1
     const uint8_t bus_channel_1_addr = 0x02;
     /// @param bus_channel_2_addr Register address of the bus voltage for channel 2
