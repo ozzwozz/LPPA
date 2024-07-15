@@ -24,6 +24,6 @@ public:
     void flashing_thread();
 
 private:
-    /// @param m_pin member variable for the pin number
+    /// @brief m_pin member variable for the pin number
     uint m_pin;
 };

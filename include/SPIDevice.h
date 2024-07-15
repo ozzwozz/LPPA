@@ -36,9 +36,9 @@ public:
     void exchange(const uint8_t *tx_data, uint8_t *rx_data, size_t len);
 
 protected:
-    /// @param m_spi member spi instance 
+    /// @brief m_spi member spi instance 
     spi_inst_t* m_spi;
-    /// @param m_cs_pin member chip select pin 
+    /// @brief m_cs_pin member chip select pin 
     uint m_cs_pin;
 
     /// @brief Select the device

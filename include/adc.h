@@ -26,7 +26,7 @@ public:
     uint16_t voltage_P13V_PGOOD;
 
     /// @brief read the raw value of the given adc pin
-    /// @param pin 
+    /// @param pin to read the raw adc value for 
     /// @return uint16_t value on the pin
     uint16_t read_raw_adc(uint pin);
 
@@ -36,7 +36,7 @@ public:
     float read_voltage_adc(uint pin);
 
     /// @brief read the voltage on all of the pins
-    void read_all();
+    void read_all_voltages();
 
     /// @brief Set the p13v enable pin
     void set_p13v_enable_pin();

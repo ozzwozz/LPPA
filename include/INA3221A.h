@@ -30,6 +30,7 @@ public:
     bool get_bus_voltages(std::vector<uint16_t> &voltage);
 
 private:
+    /// @param config_register Register address for device configuration
     uint8_t config_register = 0x00;
 
     /// @param shunt_channel_1_addr Register address of the shunt voltage for channel 1

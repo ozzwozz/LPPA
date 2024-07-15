@@ -31,8 +31,8 @@ public:
     bool pa_power_state();
 
 private:
-    /// @param m_enable_pin power enable pin
+    /// @brief m_enable_pin power enable pin
     uint m_enable_pin;
-    /// @param m_shutdown_pin PA shutdown pin
+    /// @brief m_shutdown_pin PA shutdown pin
     uint m_shutdown_pin;
 };

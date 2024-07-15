@@ -31,22 +31,22 @@ public:
     
     /// @brief Get the software ID
     /// @param software_id 
-    /// @return 
+    /// @return success is true 
     bool get_software_id(uint32_t &software_id);
 
     /// @brief Get the hardware ID
     /// @param hardware_id 
-    /// @return 
+    /// @return success is true 
     bool get_hardware_id(uint32_t &hardware_id);
 
     /// @brief Set the software ID
     /// @param software_id 
-    /// @return 
+    /// @return success is true 
     bool set_software_id(uint32_t &software_id);
 
     /// @brief Set the hardware ID
     /// @param hardware_id 
-    /// @return 
+    /// @return success is true 
     bool set_hardware_id(uint32_t &hardware_id);
 
 private:
