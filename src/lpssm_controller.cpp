@@ -46,17 +46,17 @@ int main()
 
     spi_set_format(spi0,8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
-    LED led_17 = LED(21);
-    LED led_18 = LED(22);
-    LED led_19 = LED(26);
-    LED led_20 = LED(27);
-    LED led_21 = LED(28);
+    LED PA5_LED = LED(21);
+    LED PA4_LED = LED(22);
+    LED PA3_LED = LED(26);
+    LED PA2_LED = LED(27);
+    LED PA1_LED = LED(28);
     
-    PSU psu_1 = PSU(2, 11);
-    PSU psu_2 = PSU(3, 12);
-    PSU psu_3 = PSU(6, 13);
-    PSU psu_4 = PSU(7, 14);
-    PSU psu_5 = PSU(10, 15);
+    PSU PA1_PSU = PSU(2, 11);
+    PSU PA2_PSU = PSU(3, 12);
+    PSU PA3_PSU = PSU(6, 13);
+    PSU PA4_PSU = PSU(7, 14);
+    PSU PA5_PSU = PSU(10, 15);
 
     M24M02 m24m02 = M24M02(i2c0, EEPROM_ADDR);
     ADC adc = ADC();
@@ -65,51 +65,51 @@ int main()
     INA3221A ina3221_2 = INA3221A(i2c0, INA3221A_2_ADDR);
     ADS8166IRHBT ads8166 = ADS8166IRHBT(spi0, SPI_CS_PIN);
 
-    UART_Handler uart_handler = UART_Handler(uart1, 9600, 9, 8, psu_1, psu_2, psu_3, psu_4, psu_5
+    UART_Handler uart_handler = UART_Handler(uart1, 9600, 9, 8, PA1_PSU, PA2_PSU, PA3_PSU, PA4_PSU, PA5_PSU
                                             , m24m02, adc, ds1682, ina3221_1, ina3221_2, ads8166);
 
     while (true) {
-        if (psu_1.pa_power_state())
+        if (PA1_PSU.pa_power_state())
         {
-            led_17.LED_on();
+            PA5_LED.LED_on();
         }
-        if (psu_2.pa_power_state())
+        if (PA2_PSU.pa_power_state())
         {
-            led_18.LED_on();
+            PA4_LED.LED_on();
         }
-        if (psu_3.pa_power_state())
+        if (PA3_PSU.pa_power_state())
         {
-            led_19.LED_on();
+            PA3_LED.LED_on();
         }
-        if (psu_4.pa_power_state())
+        if (PA4_PSU.pa_power_state())
         {
-            led_20.LED_on();
+            PA2_LED.LED_on();
         }
-        if (psu_5.pa_power_state())
+        if (PA5_PSU.pa_power_state())
         {
-            led_21.LED_on();
+            PA1_LED.LED_on();
         }
         printf("Hello, world!\n");
  
-        if (psu_1.pa_status())
+        if (PA1_PSU.pa_status())
         {
-            led_17.LED_off();
+            PA5_LED.LED_off();
         }
-        if (psu_2.pa_status())
+        if (PA2_PSU.pa_status())
         {
-            led_18.LED_off();
+            PA4_LED.LED_off();
         }
-        if (psu_3.pa_status())
+        if (PA3_PSU.pa_status())
         {
-            led_19.LED_off();
+            PA3_LED.LED_off();
         }
-        if (psu_4.pa_status())
+        if (PA4_PSU.pa_status())
         {
-            led_20.LED_off();
+            PA2_LED.LED_off();
         }
-        if (psu_5.pa_status())
+        if (PA5_PSU.pa_status())
         {
-            led_21.LED_off();
+            PA1_LED.LED_off();
         }
     }
 }

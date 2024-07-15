@@ -30,6 +30,7 @@ UART_Handler::UART_Handler(uart_inst_t *uart, uint baud_rate, uint rx_pin, uint 
     // Set UART_Handler flow control CTS/RTS, we don't want these, so turn them off
     uart_set_hw_flow(m_uart, false, false);
 
+    // enable UART interrupt
     uart_set_irq_enables(m_uart, true, false);
     
     // check which instance of UART_Handler is being used to give the correct UART_Handler interrupt handler
@@ -250,29 +251,55 @@ void UART_Handler::get_characterisation(std::vector<char>& response)
 void UART_Handler::get_bits(std::vector<char>& response)
 {
     uint32_t timestamp;
+    uint16_t counter;
     float temperature;
-
-    size_t initialSize = response.size(); // Store initial size to calculate the size of added data
 
     // Get timestamp from DS1682
     if (m_ds1682.getTime(timestamp))
     {
-        response.resize(initialSize + sizeof(uint32_t));
-        memcpy(response.data() + initialSize, &timestamp, sizeof(uint32_t));
+        response[1] = (timestamp >> 24);
+        response[2] = (timestamp >> 16);
+        response[3] = (timestamp >> 8);
+        response[4] = timestamp & 0xFF;
     }
+
+    // Get timestamp from DS1682
+    if (m_ds1682.getEventCounter(counter))
+    {
+        response[5] = counter >> 8;
+        // Extract lower 8 bits
+        response[6] = counter & 0xFF;
+    }
+
 }
 
 void UART_Handler::get_hardware_numbers(std::vector<char>& response)
 {
-    uint32_t device_id;
+    uint32_t hardware_id;
 
-    // ETR Hardware Number
-    response[1] = m_ds1682.getUniqueID(device_id);
+    // EEPROM Hardware Number
+    if (!m_m24m02.get_hardware_id(hardware_id))
+    {
+        // printf("Unable to retrieve the Software numbers.");
+    }
 
-    // EEPROM (?)
+    response[1] = (hardware_id >> 24);
+    response[2] = (hardware_id >> 16);
+    response[3] = (hardware_id >> 8);
+    response[4] = hardware_id & 0xFF;
 }
 
 void UART_Handler::get_software_numbers(std::vector<char>& response)
 {
-    // Pi Pico Software Number
+    uint32_t software_id;
+
+    // EEPROM Software Number
+    if (!m_m24m02.get_software_id(software_id))
+    {
+        // printf("Unable to retrieve the Software numbers.");
+    }
+    response[1] = (software_id >> 24);
+    response[2] = (software_id >> 16);
+    response[3] = (software_id >> 8);
+    response[4] = software_id & 0xFF;
 }

@@ -22,14 +22,14 @@ void DS1682::reset()
 {
     configuration.b.reset_enable = 1;
     uint8_t config_command[2] {0x07 , configuration.i};
-    write(config_command, 2);
-    write(reset_command, 2);
-    write(reset_command, 2);
+    write(config_command, 2); // set reset enable in the config register
+    write(reset_command, 2); // send reset command twice
+    write(reset_command, 2); // send reset command twice
     configuration.b.reset_enable = 0;
     config_command[2] = configuration.i;
-    write(config_command, 2);
-    write(reset_command, 2);
-    write(reset_command, 2);
+    write(config_command, 2); // unset reset enable in the config register
+    write(reset_command, 2); // send reset command twice
+    write(reset_command, 2); // send reset command twice
 }
 
 void DS1682::writeConfigRegister(uint8_t config)
@@ -70,11 +70,10 @@ bool DS1682::getEventCounter(uint16_t &counter)
 {
     uint8_t register_address[2]; // 8 bytes needed for unique ID data
 
-    // Register address for reading the event c ounter
+    // Register address for reading the event counter
     register_address[0] = event_counter_address_low;
 
     // request time data
-    // using a special i2c_write because we want to keep master control
     int ret = i2c_write_blocking(m_i2c, m_address, register_address, 1, false);
     if (ret == PICO_ERROR_GENERIC)
     {

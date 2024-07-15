@@ -14,7 +14,7 @@ bool INA3221A::configure()
     uint8_t command[3] {config_register, config >> 8, config};
 
     // Send config
-    int ret = i2c_write_blocking(m_i2c, m_address, command, sizeof(buffer), true);
+    int ret = i2c_write_blocking(m_i2c, m_address, command, sizeof(command), true);
     if (ret == PICO_ERROR_GENERIC)
     {
         return false;

@@ -55,7 +55,7 @@ bool M24M02::get_software_id(uint32_t &software_id)
     buffer[1] = software_id_address_low & 0xFF;
 
     // request time data
-    // using a special i2c_write because we want to keep master control
+    // i2c_write because we want to keep master control
     int ret = i2c_write_blocking(m_i2c, m_address, buffer, 2, true);
     if (ret == PICO_ERROR_GENERIC)
     {
@@ -85,7 +85,7 @@ bool M24M02::get_hardware_id(uint32_t &hardware_id)
     buffer[1] = hardware_id_address_low & 0xFF;
 
     // request time data
-    // using a special i2c_write because we want to keep master control
+    // i2c_write because we want to keep master control
     int ret = i2c_write_blocking(m_i2c, m_address, buffer, 2, true);
     if (ret == PICO_ERROR_GENERIC)
     {
@@ -118,7 +118,7 @@ bool M24M02::set_software_id(uint32_t &software_id)
     buffer[4] = (software_id >> 8);
     buffer[5] = software_id & 0xFF;
     
-    // using a special i2c_write because we want to keep master control
+    // i2c_write because we want to keep master control
     int ret = i2c_write_blocking(m_i2c, m_address, buffer, sizeof(buffer), false);
     if (ret == PICO_ERROR_GENERIC)
     {
@@ -142,7 +142,7 @@ bool M24M02::set_hardware_id(uint32_t &hardware_id)
     buffer[4] = (hardware_id >> 8);
     buffer[5] = hardware_id & 0xFF;
     
-    // using a special i2c_write because we want to keep master control
+    // i2c_write because we want to keep master control
     int ret = i2c_write_blocking(m_i2c, m_address, buffer, sizeof(buffer), false);
     if (ret == PICO_ERROR_GENERIC)
     {

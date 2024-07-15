@@ -30,7 +30,7 @@ float ADC::read_voltage_adc(uint pin)
     return (3.3 * adc_value) / (1 << 12);
 }
 
-void ADC::read_all()
+void ADC::read_all_voltages()
 {
     voltage_P13V_PGOOD = gpio_get(P13V_PGOOD_PIN);
 }
