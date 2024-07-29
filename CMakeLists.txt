@@ -59,6 +59,7 @@ set(HEADER_FILES
     include/I2CDevice.h
     include/INA3221A.h
     include/LED.h
+    include/LEDFlash.h
     include/M24M02.h
     include/PSU.h
     include/SPIDevice.h
@@ -73,6 +74,7 @@ set(SOURCE_FILES
     src/I2CDevice.cpp
     src/INA3221A.cpp
     src/LED.cpp
+    src/LEDFlash.cpp
     src/M24M02.cpp
     src/lpssm_controller.cpp
     src/PSU.cpp
@@ -109,6 +111,7 @@ target_link_libraries(lpssm_controller
         hardware_watchdog
         hardware_adc
         hardware_spi
+	pico_multicore
         )
 
 pico_add_extra_outputs(lpssm_controller)
