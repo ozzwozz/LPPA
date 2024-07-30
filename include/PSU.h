@@ -31,12 +31,12 @@ public:
     /// @brief check the power state of the PA
     /// @return turned on is true
     bool pa_power_state();
+    /// @brief m_led LED associated with the PSU
+    LED m_led;
 
 private:
     /// @brief m_inhibit_pin power enable pin
     uint m_inhibit_pin;
     /// @brief m_power_enable_pin PA shutdown pin
     uint m_power_enable_pin;
-    /// @brief m_led LED associated with the PSU
-    LED m_led;
 };

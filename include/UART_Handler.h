@@ -63,34 +63,9 @@ public:
     /// @brief Destroy the UART_Handler object
     ~UART_Handler();
 
-    /// @brief Write to UART_Handler
-    /// @param data data to write to UART
-    void write(const char *data);
-
-    /// @brief Write to UART_Handler
-    /// @param data data to write to UART
-    /// @param len length of the data
-    void write(const char *data, size_t len);
-
-    /// @brief Read from UART_Handler
-    /// @param data object to store data from UART
-    /// @param len length of the data expected
-    /// @return size_t size of the data read
-    size_t read(char *data, size_t len);
-
     /// @brief Check if UART_Handler is available to interact with
     /// @return true if available 
     bool available();
-
-    /// @brief flush the Rx buffer
-    void flush_rx();
-
-    /// @brief flush the Tx buffer
-    void flush_tx();
-
-    /// @brief Send data in the tx buffer
-    /// @return size_t 
-    size_t send_message();
 
     /// @brief Parse the received message
     void decode_message(const uint8_t message[5]);
