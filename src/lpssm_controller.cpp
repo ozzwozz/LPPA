@@ -67,11 +67,11 @@ int main()
     LED PA2_LED = LED(27);
     LED PA1_LED = LED(28);
 
-    PSU PA1_PSU = PSU(2, 11, PA5_LED);
-    PSU PA2_PSU = PSU(3, 12, PA4_LED);
+    PSU PA1_PSU = PSU(2, 11, PA1_LED);
+    PSU PA2_PSU = PSU(3, 12, PA2_LED);
     PSU PA3_PSU = PSU(6, 13, PA3_LED);
-    PSU PA4_PSU = PSU(7, 14, PA2_LED);
-    PSU PA5_PSU = PSU(10, 15, PA1_LED);
+    PSU PA4_PSU = PSU(7, 14, PA4_LED);
+    PSU PA5_PSU = PSU(10, 15, PA5_LED);
 
     M24M02 m24m02 = M24M02(i2c0, EEPROM_ADDR);
     ADC adc = ADC();

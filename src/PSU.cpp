@@ -20,12 +20,14 @@ PSU::~PSU()
 
 void PSU::pa_power_enable()
 {
-    gpio_put(m_inhibit_pin, 1);
+    gpio_put(m_inhibit_pin, 0);
+    m_led.start_timer();
 }
 
 void PSU::pa_power_disable()
 {
-    gpio_put(m_inhibit_pin, 0);
+    gpio_put(m_inhibit_pin, 1);    
+    m_led.start_timer();
 }
 
 bool PSU::pa_status()
@@ -35,13 +37,14 @@ bool PSU::pa_status()
 
 void PSU::pa_shutdown()
 {
-    gpio_put(m_power_enable_pin, 1);
+    gpio_put(m_power_enable_pin, 0);
+    m_led.LED_off();
 }
 
 void PSU::pa_turn_on()
 {
-    gpio_put(m_power_enable_pin, 0);
-
+    gpio_put(m_power_enable_pin, 1);
+    m_led.LED_on();
 }
 
 bool PSU::pa_power_state()

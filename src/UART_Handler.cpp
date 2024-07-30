@@ -33,60 +33,11 @@ UART_Handler::UART_Handler(uart_inst_t *uart, uint baud_rate, uint rx_pin, uint 
 
     // enable UART interrupt
     uart_set_irq_enables(m_uart, true, false);
-    
-    // check which instance of UART_Handler is being used to give the correct UART_Handler interrupt handler
-    int UART_IRQ = uart == m_uart ? UART0_IRQ : UART1_IRQ;
-    irq_set_exclusive_handler(UART_IRQ, (irq_handler_t)uart_irq_handler);
-    irq_set_enabled(UART_IRQ, true);
-}
-
-void UART_Handler::write(const char *data)
-{
-    uart_write_blocking(m_uart, reinterpret_cast<const uint8_t*>(data), strlen(data));
-}
-
-void UART_Handler::write(const char *data, size_t len)
-{
-    uart_write_blocking(m_uart, reinterpret_cast<const uint8_t*>(data), len);
-}
-
-size_t UART_Handler::read(char *data, size_t len)
-{
-    size_t bytes_read = 0;
-    while (!rx_buffer_.empty() && bytes_read < len)
-    {
-        data[bytes_read++] = rx_buffer_.front();
-        rx_buffer_.pop();
-    }
-    return bytes_read > 0;
 }
 
 bool UART_Handler::available()
 {
     return uart_is_readable(m_uart) ? 1 : 0;
-}
-
-void UART_Handler::flush_rx()
-{
-    rx_buffer_ = std::queue<char>();
-}
-
-void UART_Handler::flush_tx()
-{
-    // tx_buffer_ = std::queue<std::vector<char>>();
-}
-
-void UART_Handler::uart_irq_handler(void *context)
-{
-    UART_Handler *uart = static_cast<UART_Handler *>(context);
-
-    gpio_put(PICO_DEFAULT_LED_PIN, !gpio_get(PICO_DEFAULT_LED_PIN));
-
-    while (uart_is_readable(uart->m_uart))
-    {
-        char c = uart_getc(uart->m_uart);
-        uart->rx_buffer_.push(c);
-    }
 }
 
 // TODO: Issue #4 - Finish Implementation of decoding and responding to UART messages
@@ -106,7 +57,6 @@ void UART_Handler::decode_message(const uint8_t message[5])
     switch (header)
     {
         case message_headers::SET_PSU:
-            // mutable_message[1] = uart_getc(m_uart);
             set_psu(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -116,7 +66,6 @@ void UART_Handler::decode_message(const uint8_t message[5])
             uart_putc(m_uart, response[1]);
             break;
         case message_headers::SET_PA_ENABLE:
-            // mutable_message[1] = uart_getc(m_uart);
             set_pa_power_enable(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -126,8 +75,6 @@ void UART_Handler::decode_message(const uint8_t message[5])
             uart_putc(m_uart, response[1]);
             break;
         case message_headers::SET_LED_STATE:
-            // mutable_message[1] = uart_getc(m_uart);
-            // mutable_message[2] = uart_getc(m_uart);
             set_led_state(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -192,28 +139,18 @@ void UART_Handler::decode_message(const uint8_t message[5])
             uart_putc(m_uart, response[4]);
             break;
         case message_headers::SET_HARDWARE_NUMBERS:
-            // mutable_message[1] = uart_getc(m_uart);
-            // mutable_message[2] = uart_getc(m_uart);
-            // mutable_message[3] = uart_getc(m_uart);
-            // mutable_message[4] = uart_getc(m_uart);
             set_hardware_numbers(response, mutable_message);
             uart_putc(m_uart, header);
             break;
-        case message_headers::SET_SOFTWARE_NUMBERS:
-            // mutable_message[1] = uart_getc(m_uart);
-            // mutable_message[2] = uart_getc(m_uart);
-            // mutable_message[3] = uart_getc(m_uart);
-            // mutable_message[4] = uart_getc(m_uart);            
+        case message_headers::SET_SOFTWARE_NUMBERS:        
             set_software_numbers(response, mutable_message);
             uart_putc(m_uart, header);
             break;
         case message_headers::GET_MONITORING_DETAILS:
-            // mutable_message[1] = uart_getc(m_uart);
             get_monitoring_details(response, mutable_message);
             uart_putc(m_uart, header);
             break;
         case message_headers::SET_P13V_OXCO_PIN:
-            // mutable_message[1] = uart_getc(m_uart);
             set_p13v_oxco_pin(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -223,45 +160,65 @@ void UART_Handler::decode_message(const uint8_t message[5])
 
 }
 
-// TODO: Issue #4 - Finish Implementation of decoding and responding to UART messages
-size_t UART_Handler::send_message()
-{
-    size_t bytes_sent = 0;
-    char data[128];
-    while (!tx_buffer_.empty() && bytes_sent < sizeof(data))
-    {
-        // data[bytes_sent++] = tx_buffer_.front();
-        tx_buffer_.pop();
-    }
-
-    write(data);
-
-    return bytes_sent > 0;
-}
-
 void UART_Handler::set_psu(uint8_t data[5])
 {
-    uint8_t band_mask = data[1];
+    uint8_t power_state = data[1];
+    uint8_t band_mask = data[2];
 
     if ((band_mask & 1) != 0)
     {
-        m_psu_1.pa_power_enable();
+        if (power_state)
+        {
+            m_psu_1.pa_turn_on();
+        }
+        else
+        {
+            m_psu_1.pa_shutdown();
+        }
     }
     if ((band_mask & (1 << 1)) != 0)
     {
-        m_psu_2.pa_power_enable();
+        if (power_state)
+        {
+            m_psu_2.pa_turn_on();
+        }
+        else
+        {
+            m_psu_2.pa_shutdown();
+        }
     }
     if ((band_mask & (1 << 2)) != 0)
     {
-        m_psu_3.pa_power_enable();
+        if (power_state)
+        {
+            m_psu_3.pa_turn_on();
+        }
+        else
+        {
+            m_psu_3.pa_shutdown();
+        }
     }
     if ((band_mask & (1 << 3)) != 0)
     {
-        m_psu_4.pa_power_enable();
+        if (power_state)
+        {
+            m_psu_4.pa_turn_on();
+        }
+        else
+        {
+            m_psu_4.pa_shutdown();
+        }
     }
     if ((band_mask & (1 << 4)) != 0)
     {
-        m_psu_5.pa_power_enable();
+        if (power_state)
+        {
+            m_psu_5.pa_turn_on();
+        }
+        else
+        {
+            m_psu_5.pa_shutdown();
+        }
     }
 }
 
@@ -280,34 +237,69 @@ void UART_Handler::get_psu(uint8_t response[24])
 
 void UART_Handler::set_pa_power_enable(uint8_t data[5])
 {
+    uint8_t power_enable = data[1];
     uint8_t band_mask = data[2];
 
     if ((band_mask & 1) != 0)
     {
-        m_psu_1.pa_power_enable();
+        if (power_enable)
+        {
+            m_psu_1.pa_power_enable();
+        }
+        else
+        {
+            m_psu_1.pa_power_disable();
+        }
     }
     if ((band_mask & (1 << 1)) != 0)
     {
-        m_psu_2.pa_power_enable();
+        if (power_enable)
+        {
+            m_psu_2.pa_power_enable();
+        }
+        else
+        {
+            m_psu_2.pa_power_disable();
+        }
     }
     if ((band_mask & (1 << 2)) != 0)
     {
-        m_psu_3.pa_power_enable();
+        if (power_enable)
+        {
+            m_psu_3.pa_power_enable();
+        }
+        else
+        {
+            m_psu_3.pa_power_disable();
+        }
     }
     if ((band_mask & (1 << 3)) != 0)
     {
-        m_psu_4.pa_power_enable();
+        if (power_enable)
+        {
+            m_psu_4.pa_power_enable();
+        }
+        else
+        {
+            m_psu_4.pa_power_disable();
+        }
     }
     if ((band_mask & (1 << 4)) != 0)
     {
-        m_psu_5.pa_power_enable();
+        if (power_enable)
+        {
+            m_psu_5.pa_power_enable();
+        }
+        else
+        {
+            m_psu_5.pa_power_disable();
+        }
     }
 }
 
 void UART_Handler::get_pa_power_enable(uint8_t response[24])
 {
     uint8_t lna_status;
-    bool value;
 
     lna_status |= (m_psu_1.pa_status());
     lna_status |= (m_psu_2.pa_status() << 1);
@@ -320,12 +312,78 @@ void UART_Handler::get_pa_power_enable(uint8_t response[24])
 
 void UART_Handler::set_led_state(uint8_t mutable_message[5])
 {
+    uint8_t band_mask = mutable_message[1];
+    uint8_t state = mutable_message[2];
 
+    if ((band_mask & 1) != 0)
+    {
+        if (mutable_message[2])
+        {
+            m_psu_1.m_led.LED_on();
+        }
+        else
+        {
+            m_psu_1.m_led.LED_off();
+        }
+    }
+    if ((band_mask & (1 << 1)) != 0)
+    {
+        if (mutable_message[2])
+        {
+            m_psu_2.m_led.LED_on();
+        }
+        else
+        {
+            m_psu_2.m_led.LED_off();
+        }
+    }
+    if ((band_mask & (1 << 2)) != 0)
+    {
+        if (mutable_message[2])
+        {
+            m_psu_3.m_led.LED_on();
+        }
+        else
+        {
+            m_psu_3.m_led.LED_off();
+        }
+    }
+    if ((band_mask & (1 << 3)) != 0)
+    {
+        if (mutable_message[2])
+        {
+            m_psu_4.m_led.LED_on();
+        }
+        else
+        {
+            m_psu_4.m_led.LED_off();
+        }
+    }
+    if ((band_mask & (1 << 4)) != 0)
+    {
+        if (mutable_message[2])
+        {
+            m_psu_5.m_led.LED_on();
+        }
+        else
+        {
+            m_psu_5.m_led.LED_off();
+        }
+    }
 }
 
 void UART_Handler::get_led_state(uint8_t response[24])
 {
+
+    uint8_t led_statuses;
+
+    led_statuses |= (m_psu_1.m_led.LED_state());
+    led_statuses |= (m_psu_2.m_led.LED_state() << 1);
+    led_statuses |= (m_psu_3.m_led.LED_state() << 2);
+    led_statuses |= (m_psu_4.m_led.LED_state() << 3);
+    led_statuses |= (m_psu_5.m_led.LED_state() << 4);
     
+    response[1] = led_statuses;
 }
 
 void UART_Handler::set_characterisation(uint8_t data[5])

@@ -24,3 +24,29 @@ bool LED::LED_state()
 {
     return gpio_get(m_pin);
 }
+
+bool LED::start_timer()
+{
+    if (add_repeating_timer_ms(1000, flashing_timer_callback, this, &m_timer))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool LED::stop_timer()
+{
+    if (cancel_repeating_timer(&m_timer))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool LED::flashing_timer_callback(repeating_timer *rt)
+{
+    LED *led_class = static_cast<LED*>(rt->user_data);
+    gpio_put(led_class->m_pin, !led_class->LED_state());
+
+    return true;
+}
