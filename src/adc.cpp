@@ -3,9 +3,10 @@
 ADC::ADC()
 {
     adc_init();
+    stdio_init_all();
 
     gpio_init(P13V_PGOOD_PIN);
-    gpio_set_dir(P13V_PGOOD_PIN, GPIO_IN);
+    gpio_set_input_enabled(P13V_PGOOD_PIN, true);
     
     gpio_init(P13V_ENABLE_PIN);
     gpio_set_dir(P13V_ENABLE_PIN, GPIO_OUT);
@@ -37,10 +38,10 @@ void ADC::read_all_voltages()
 
 void ADC::set_p13v_enable_pin()
 {
-    gpio_put(P13V_ENABLE_PIN, 1);
+    gpio_put(P13V_ENABLE_PIN, true);
 }
 
 void ADC::set_p13v_disable()
 {
-    gpio_put(P13V_ENABLE_PIN, 0);
+    gpio_put(P13V_ENABLE_PIN, false);
 }

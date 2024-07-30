@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include <hardware/watchdog.h>
 
 #include "adc.h"
 #include "ADS8166IRHBT.h"
@@ -31,6 +32,20 @@ int main()
 {
     stdio_init_all();
 
+    // Watchdog restart code
+    if (watchdog_caused_reboot())
+    {
+        printf("Rebooted by Watchdog!\n");
+        // Whatever action you may take if a watchdog caused a reboot
+    }
+
+    // 0x7fffff is roughly 8.3 seconds and the maximum
+    watchdog_enable(0x7fffff, 1);
+    
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED on
+
     // I2C Initialisation. Using it at 100Khz.
     i2c_init(I2C0_PORT, 100'000);
     gpio_set_function(I2C0_SDA, GPIO_FUNC_I2C);
@@ -51,12 +66,12 @@ int main()
     LED PA3_LED = LED(26);
     LED PA2_LED = LED(27);
     LED PA1_LED = LED(28);
-    
-    PSU PA1_PSU = PSU(2, 11);
-    PSU PA2_PSU = PSU(3, 12);
-    PSU PA3_PSU = PSU(6, 13);
-    PSU PA4_PSU = PSU(7, 14);
-    PSU PA5_PSU = PSU(10, 15);
+
+    PSU PA1_PSU = PSU(2, 11, PA5_LED);
+    PSU PA2_PSU = PSU(3, 12, PA4_LED);
+    PSU PA3_PSU = PSU(6, 13, PA3_LED);
+    PSU PA4_PSU = PSU(7, 14, PA2_LED);
+    PSU PA5_PSU = PSU(10, 15, PA1_LED);
 
     M24M02 m24m02 = M24M02(i2c0, EEPROM_ADDR);
     ADC adc = ADC();
@@ -68,48 +83,31 @@ int main()
     UART_Handler uart_handler = UART_Handler(uart1, 9600, 9, 8, PA1_PSU, PA2_PSU, PA3_PSU, PA4_PSU, PA5_PSU
                                             , m24m02, adc, ds1682, ina3221_1, ina3221_2, ads8166);
 
-    while (true) {
-        if (PA1_PSU.pa_power_state())
+    gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+
+    while (true)
+    {
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
+        sleep_ms(100);
+
+        watchdog_update();
+
+        if (uart_is_readable_within_us(uart1, 0))
         {
-            PA5_LED.LED_on();
+            uint8_t mutable_message[5];
+            int8_t counter = 0;
+            while (uart_is_readable(uart1))
+            {
+                mutable_message[counter] = uart_getc(uart1);
+                counter++;
+            }
+            
+            
+            uart_handler.decode_message(mutable_message);
         }
-        if (PA2_PSU.pa_power_state())
-        {
-            PA4_LED.LED_on();
-        }
-        if (PA3_PSU.pa_power_state())
-        {
-            PA3_LED.LED_on();
-        }
-        if (PA4_PSU.pa_power_state())
-        {
-            PA2_LED.LED_on();
-        }
-        if (PA5_PSU.pa_power_state())
-        {
-            PA1_LED.LED_on();
-        }
-        printf("Hello, world!\n");
- 
-        if (PA1_PSU.pa_status())
-        {
-            PA5_LED.LED_off();
-        }
-        if (PA2_PSU.pa_status())
-        {
-            PA4_LED.LED_off();
-        }
-        if (PA3_PSU.pa_status())
-        {
-            PA3_LED.LED_off();
-        }
-        if (PA4_PSU.pa_status())
-        {
-            PA2_LED.LED_off();
-        }
-        if (PA5_PSU.pa_status())
-        {
-            PA1_LED.LED_off();
-        }
+  
+
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(100);
     }
 }
