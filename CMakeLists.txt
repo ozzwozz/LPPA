@@ -111,8 +111,9 @@ target_link_libraries(lpssm_controller
         hardware_watchdog
         hardware_adc
         hardware_spi
-	pico_multicore
+        pico_multicore
+        hardware_uart
+        hardware_gpio
         )
 
 pico_add_extra_outputs(lpssm_controller)
-
