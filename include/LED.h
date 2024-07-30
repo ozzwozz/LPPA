@@ -23,6 +23,8 @@ public:
     /// @brief thread that flashes the LED when transmitting
     void flashing_thread();
 
+    bool LED_state();
+
 private:
     /// @brief m_pin member variable for the pin number
     uint m_pin;

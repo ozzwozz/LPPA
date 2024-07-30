@@ -2,6 +2,7 @@
 
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
+#include "hardware/gpio.h"
 
 /// @class ADC
 /// @brief ADC Driver for reading from analogue to digital pins

@@ -5,6 +5,7 @@
 #include "hardware/gpio.h"
 #include "hardware/irq.h"
 #include <queue>
+#include <stdio.h>
 
 #include "M24M02.h"
 #include "DS1682.h"
@@ -25,11 +26,17 @@ public:
         GET_PSU = 0x01,
         SET_PA_ENABLE = 0x02, 
         GET_PA_ENABLE = 0x03,
+        SET_LED_STATE = 0X04,
+        GET_LED_STATE = 0X05,
         SET_CHARACTERISATION = 0x10,
         GET_CHARACTERISATION = 0x11,
         GET_BITS = 0X20,
         GET_HARDWARE_NUMBERS = 0X21,
         GET_SOFTWARE_NUMBERS = 0X22,
+        SET_HARDWARE_NUMBERS = 0X23,
+        SET_SOFTWARE_NUMBERS = 0X24,
+        GET_MONITORING_DETAILS = 0X25,
+        SET_P13V_OXCO_PIN = 0X40
     }; // Enum inside the class
     
     /// @brief Construct a new UART_Handler object
@@ -85,6 +92,9 @@ public:
     /// @return size_t 
     size_t send_message();
 
+    /// @brief Parse the received message
+    void decode_message(const uint8_t message[5]);
+
 private:
     /// @param m_uart uart instance
     uart_inst_t *m_uart;
@@ -123,49 +133,58 @@ private:
     /// @param rx_buffer_ rx buffer queue
     std::queue<char> rx_buffer_;
     /// @param tx_buffer_ tx buffer queue
-    std::queue<std::vector<char>> tx_buffer_;
+    std::queue<char> tx_buffer_;
 
     /// @brief Interrupt handler for when data is received
     /// @param context pointer to calling instance.
     static void uart_irq_handler(void *context);
 
-    /// @brief Parse the received message
-    void decode_message();
-
     /// @brief Set the psu power status
     /// @param data 
-    void set_psu(char* data);
+    void set_psu(uint8_t data[5]);
 
     /// @brief Get the current psu power status
     /// @param response response passed as object to be built in function
     /// @param band_mask bit mask for the bands to get information about 
-    void get_psu(std::vector<char>& response, uint8_t band_mask);
+    void get_psu(uint8_t response[24]);
 
     /// @brief Set the bands for which PA is enabled/disabled
     /// @param data value to set the PA to 
-    void set_pa_enable(char* data);
+    void set_pa_power_enable(uint8_t data[5]);
     
     /// @brief Get the bands on which PA is enabled
     /// @param response response passed as object to be built in function
-    void get_pa_enable(std::vector<char>& response);
+    void get_pa_power_enable(uint8_t response[24]);
+
+    void set_led_state(uint8_t mutable_message[5]);
+
+    void get_led_state(uint8_t response[24]);
 
     /// @brief Set the characterisation table on the EEPROM 
     /// @param data value to set the PA to
-    void set_characterisation(char* data);
+    void set_characterisation(uint8_t data[5]);
 
     /// @brief Get the current characterisation table on the EEPROM
     /// @param response response passed as object to be built in function
-    void get_characterisation(std::vector<char>& response);
+    void get_characterisation(uint8_t response[24]);
 
     /// @brief A list of the PA stage bits
     /// @param response response passed as object to be built in function
-    void get_bits(std::vector<char>& response);
+    void get_bits(uint8_t response[24]);
 
     /// @brief A list of the PA stage hardware numbers
     /// @param response response passed as object to be built in function
-    void get_hardware_numbers(std::vector<char>& response);
+    void get_hardware_numbers(uint8_t response[24]);
 
     /// @brief A list of the PA stage software numbers
     /// @param response response passed as object to be built in function
-    void get_software_numbers(std::vector<char>& response);
+    void get_software_numbers(uint8_t response[24]);
+
+    void set_hardware_numbers(uint8_t response[24], uint8_t mutable_message[5]);
+
+    void set_software_numbers(uint8_t response[24], uint8_t mutable_message[5]);
+
+    void get_monitoring_details(uint8_t response[24], uint8_t mutable_message[5]);
+
+    void set_p13v_oxco_pin(uint8_t mutable_message[5]);
 };
