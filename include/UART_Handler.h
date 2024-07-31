@@ -105,14 +105,6 @@ private:
     uint m_rx_pin;
     /// @param m_tx_pin tx pin
     uint m_tx_pin;
-    /// @param rx_buffer_ rx buffer queue
-    std::queue<char> rx_buffer_;
-    /// @param tx_buffer_ tx buffer queue
-    std::queue<char> tx_buffer_;
-
-    /// @brief Interrupt handler for when data is received
-    /// @param context pointer to calling instance.
-    static void uart_irq_handler(void *context);
 
     /// @brief Set the psu power status
     /// @param data 
@@ -131,8 +123,12 @@ private:
     /// @param response response passed as object to be built in function
     void get_pa_power_enable(uint8_t response[24]);
 
+    /// @brief set LED to a given state
+    /// @param mutable_message message corresponding to the setting of the LED
     void set_led_state(uint8_t mutable_message[5]);
 
+    /// @brief get the current state of each LED - current pin state and not whether it is flashing
+    /// @param response response passed as object to be built in function 
     void get_led_state(uint8_t response[24]);
 
     /// @brief Set the characterisation table on the EEPROM 
@@ -155,11 +151,22 @@ private:
     /// @param response response passed as object to be built in function
     void get_software_numbers(uint8_t response[24]);
 
+    /// @brief set hardware number in the EEPROM
+    /// @param response response passed as object to be built in function
+    /// @param mutable_message number to set the hardware ID to
     void set_hardware_numbers(uint8_t response[24], uint8_t mutable_message[5]);
 
+    /// @brief Set software number in the EEPROM
+    /// @param response response passed as object to be built in function
+    /// @param mutable_message number to set the software ID to
     void set_software_numbers(uint8_t response[24], uint8_t mutable_message[5]);
 
+    /// @brief get the monitoring details to build the monitoring details message
+    /// @param response response passed as object to be built in function
+    /// @param mutable_message which PSUs to get the information for
     void get_monitoring_details(uint8_t response[24], uint8_t mutable_message[5]);
 
+    /// @brief set the state of the p13v pin
+    /// @param mutable_message state to set the pin to
     void set_p13v_oxco_pin(uint8_t mutable_message[5]);
 };
