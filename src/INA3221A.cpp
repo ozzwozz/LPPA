@@ -68,3 +68,55 @@ bool INA3221A::get_bus_voltages(std::vector<uint16_t> &voltage)
 
     return true;
 }
+
+bool INA3221A::pa_id_to_ina3221A_address(uint8_t pa_id, uint16_t &bus_voltage, uint16_t &shunt_voltage)
+{
+    uint8_t bus_command;
+    uint8_t shunt_command;
+
+    if (pa_id & 1)
+    {
+        bus_command = bus_channel_1_addr;
+        shunt_command = shunt_channel_1_addr;
+    }
+    else if (pa_id & (1 << 2))
+    {
+        bus_command = bus_channel_1_addr;
+        shunt_command = shunt_channel_1_addr;
+    }
+    else if (pa_id & (1 << 3))
+    {
+        bus_command = bus_channel_1_addr;
+        shunt_command = shunt_channel_1_addr;
+    }
+    else if (pa_id & (1 << 4))
+    {
+        bus_command = bus_channel_1_addr;
+        shunt_command = shunt_channel_1_addr;
+    }
+    else if (pa_id & (1 << 5))
+    {
+        bus_command = bus_channel_1_addr;
+        shunt_command = shunt_channel_1_addr;
+    }
+
+    get_voltages_for_pa(bus_command, bus_voltage);
+    get_voltages_for_pa(shunt_command, shunt_voltage);
+}
+
+bool INA3221A::get_voltages_for_pa(uint8_t command, uint16_t &voltage)
+{
+    uint8_t buffer[6] {};
+    
+    // Send bus address
+    int ret = i2c_write_blocking(m_i2c, m_address, buffer, sizeof(buffer), true);
+    if (ret == PICO_ERROR_GENERIC)
+    {
+        return false;
+    }
+
+    if (!I2CDevice::read(buffer, sizeof(buffer)))
+    {
+        return false;
+    }
+}

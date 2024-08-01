@@ -27,20 +27,12 @@ bool LED::LED_state()
 
 bool LED::start_timer()
 {
-    if (add_repeating_timer_ms(1000, flashing_timer_callback, this, &m_timer))
-    {
-        return true;
-    }
-    return false;
+    return add_repeating_timer_ms(1000, flashing_timer_callback, this, &m_timer);
 }
 
 bool LED::stop_timer()
 {
-    if (cancel_repeating_timer(&m_timer))
-    {
-        return true;
-    }
-    return false;
+    return cancel_repeating_timer(&m_timer);
 }
 
 bool LED::flashing_timer_callback(repeating_timer *rt)

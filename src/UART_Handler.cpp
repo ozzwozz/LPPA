@@ -40,10 +40,18 @@ bool UART_Handler::available()
     return uart_is_readable(m_uart) ? 1 : 0;
 }
 
-// TODO: Issue #4 - Finish Implementation of decoding and responding to UART messages
-void UART_Handler::decode_message(const uint8_t message[5])
+void UART_Handler::write(const uint8_t message[24], int8_t length)
 {
-    uint8_t mutable_message[5];
+    for (int x = 0; x < length; x++)
+    {
+        uart_putc(m_uart, message[x]);
+    }
+}
+
+// TODO: Issue #4 - Finish Implementation of decoding and responding to UART messages
+void UART_Handler::decode_message(const uint8_t message[6])
+{
+    uint8_t mutable_message[6];
     uint8_t response[24];
 
     mutable_message[0] = message[0];
@@ -51,8 +59,10 @@ void UART_Handler::decode_message(const uint8_t message[5])
     mutable_message[2] = message[2];
     mutable_message[3] = message[3];
     mutable_message[4] = message[4];
+    mutable_message[5] = message[5];
 
     uint8_t header = message[0];
+    response[0] = header;
 
     switch (header)
     {
@@ -111,16 +121,6 @@ void UART_Handler::decode_message(const uint8_t message[5])
             uart_putc(m_uart, response[12]);
             uart_putc(m_uart, response[13]);
             uart_putc(m_uart, response[14]);
-            uart_putc(m_uart, response[15]);
-            uart_putc(m_uart, response[16]);
-            uart_putc(m_uart, response[17]);
-            uart_putc(m_uart, response[18]);
-            uart_putc(m_uart, response[19]);
-            uart_putc(m_uart, response[20]);
-            uart_putc(m_uart, response[21]);
-            uart_putc(m_uart, response[22]);
-            uart_putc(m_uart, response[23]);
-            uart_putc(m_uart, response[24]);
             break;
         case message_headers::GET_HARDWARE_NUMBERS:
             get_hardware_numbers(response);
@@ -403,6 +403,7 @@ void UART_Handler::get_bits(uint8_t response[24])
     uint32_t timestamp;
     uint16_t counter;
     float temperature;
+    uint16_t voltage;
 
     // Get timestamp from DS1682
     if (m_ds1682.getTime(timestamp))
@@ -420,6 +421,17 @@ void UART_Handler::get_bits(uint8_t response[24])
         // Extract lower 8 bits
         response[6] = counter & 0xFF;
     }
+
+    // iterate over the 8 channels
+    for (int x = 0; x < 8; x++)
+    {
+        voltage = m_ads8166.read_channel(x);
+        // 7 is the next spot in the response to be populated
+        response[x+7] = m_ads8166.convert_adc_to_deg_c(voltage);
+    }
+
+    // if response gets any bigger, the next spot to populate is 15
+
 }
 
 void UART_Handler::get_hardware_numbers(uint8_t response[24])
@@ -467,13 +479,18 @@ void UART_Handler::set_software_numbers(uint8_t response[24], uint8_t mutable_me
 
 void UART_Handler::get_monitoring_details(uint8_t response[24], uint8_t mutable_message[5])
 {
-    std::vector<uint16_t> voltages;
+    uint16_t bus_voltage;
+    uint16_t shunt_voltage;
+    uint8_t pa_id = mutable_message[1];
 
-    m_ina3221_1.get_bus_voltages(voltages);
-    m_ina3221_1.get_shunt_voltages(voltages);
-
-    m_ina3221_2.get_bus_voltages(voltages);
-    m_ina3221_2.get_shunt_voltages(voltages);
+    if (pa_id <= 3)
+    {
+        m_ina3221_1.pa_id_to_ina3221A_address(pa_id, bus_voltage, shunt_voltage);
+    }
+    else
+    {
+        m_ina3221_2.pa_id_to_ina3221A_address((pa_id-3), bus_voltage, shunt_voltage);
+    }
 }
 
 void UART_Handler::set_p13v_oxco_pin(uint8_t mutable_message[5])

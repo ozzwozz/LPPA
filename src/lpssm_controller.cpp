@@ -59,7 +59,9 @@ int main()
     gpio_set_function(SPI_SCK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(SPI_CS_PIN, GPIO_FUNC_SPI);
 
-    spi_set_format(spi0,8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    spi_set_format(spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+
+    sleep_ms(2000);
 
     LED PA5_LED = LED(21);
     LED PA4_LED = LED(22);
@@ -84,30 +86,29 @@ int main()
                                             , m24m02, adc, ds1682, ina3221_1, ina3221_2, ads8166);
 
     gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+    sleep_ms(50);
 
     while (true)
     {
         gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
-        sleep_ms(100);
+        sleep_ms(50);
 
         watchdog_update();
 
         if (uart_is_readable_within_us(uart1, 0))
         {
-            uint8_t mutable_message[5];
+            uint8_t message[6];
             int8_t counter = 0;
             while (uart_is_readable(uart1))
             {
-                mutable_message[counter] = uart_getc(uart1);
+                message[counter] = uart_getc(uart1);
                 counter++;
             }
-            
-            
-            uart_handler.decode_message(mutable_message);
+
+            uart_handler.decode_message(message);
         }
-  
 
         gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(100);
+        sleep_ms(50);
     }
 }
