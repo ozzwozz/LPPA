@@ -12,7 +12,7 @@ public:
     /// @brief PSU Class Constructor
     /// @param enable_pin 
     /// @param shutdown_pin 
-    /// @param led_pin
+    /// @param led
     PSU(uint enable_pin, uint shutdown_pin, LED led);
     /// @brief PSU Class Destructor
     ~PSU();

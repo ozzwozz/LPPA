@@ -67,8 +67,13 @@ public:
     /// @return true if available 
     bool available();
 
+    /// @brief write to serial
+    /// @param message message to send
+    /// @param length length of message to send
+    void write(const uint8_t message[24], int8_t length);
+
     /// @brief Parse the received message
-    void decode_message(const uint8_t message[5]);
+    void decode_message(const uint8_t message[6]);
 
 private:
     /// @param m_uart uart instance

@@ -29,6 +29,10 @@ public:
     /// @return success is true
     bool get_bus_voltages(std::vector<uint16_t> &voltage);
 
+    bool pa_id_to_ina3221A_address(uint8_t pa_id, uint16_t &bus_voltage, uint16_t &shunt_voltage);
+
+    bool get_voltages_for_pa(uint8_t command, uint16_t &voltage);
+
 private:
     /// @param config_register Register address for device configuration
     uint8_t config_register = 0x00;
