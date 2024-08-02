@@ -1,6 +1,6 @@
 #include "PSU.h"
 
-PSU::PSU(uint enable_pin, uint power_enable_pin, LED led) : m_inhibit_pin(enable_pin), m_power_enable_pin(power_enable_pin), m_led(led)
+PSU::PSU(uint power_enable_pin, uint enable_pin, LED led) : m_inhibit_pin(enable_pin), m_power_enable_pin(power_enable_pin), m_led(led)
 {
     gpio_init(m_inhibit_pin);
     gpio_set_dir(m_inhibit_pin, GPIO_OUT);

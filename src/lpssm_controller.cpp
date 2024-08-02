@@ -46,6 +46,17 @@ int main()
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED on
 
+    uart_init(uart1, 9600);
+    gpio_set_function(9, GPIO_FUNC_UART);
+    gpio_set_function(8, GPIO_FUNC_UART);
+    uart_set_format(uart1, 8, 1, UART_PARITY_NONE);
+
+    // Turn off FIFO's - we want to do this character by character
+    uart_set_fifo_enabled(uart1, true);
+
+    // Set UART_Handler flow control CTS/RTS, we don't want these, so turn them off
+    uart_set_hw_flow(uart1, false, false);
+
     // I2C Initialisation. Using it at 100Khz.
     i2c_init(I2C0_PORT, 100'000);
     gpio_set_function(I2C0_SDA, GPIO_FUNC_I2C);
@@ -85,30 +96,21 @@ int main()
     UART_Handler uart_handler = UART_Handler(uart1, 9600, 9, 8, PA1_PSU, PA2_PSU, PA3_PSU, PA4_PSU, PA5_PSU
                                             , m24m02, adc, ds1682, ina3221_1, ina3221_2, ads8166);
 
-    gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+    gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
     sleep_ms(50);
 
     while (true)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
-        sleep_ms(50);
-
         watchdog_update();
-
+    
         if (uart_is_readable_within_us(uart1, 0))
         {
             uint8_t message[6];
             int8_t counter = 0;
-            while (uart_is_readable(uart1))
-            {
-                message[counter] = uart_getc(uart1);
-                counter++;
-            }
+
+            message[counter] = uart_getc(uart1);
 
             uart_handler.decode_message(message);
         }
-
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
     }
 }

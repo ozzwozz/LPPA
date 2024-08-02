@@ -19,20 +19,17 @@ UART_Handler::UART_Handler(uart_inst_t *uart, uint baud_rate, uint rx_pin, uint 
             , m_ina3221_2(ina3221_2)
             , m_ads8166(ads8166IRHBT)
 {
-    uart_init(uart, baud_rate);
-    gpio_set_function(rx_pin, GPIO_FUNC_UART);
-    gpio_set_function(tx_pin, GPIO_FUNC_UART);
-    uart_set_baudrate(m_uart, baud_rate);
-    uart_set_format(m_uart, 8, 1, UART_PARITY_NONE);
+    // uart_init(uart, baud_rate);
+    // gpio_set_function(rx_pin, GPIO_FUNC_UART);
+    // gpio_set_function(tx_pin, GPIO_FUNC_UART);
+    // uart_set_baudrate(m_uart, baud_rate);
+    // uart_set_format(m_uart, 8, 1, UART_PARITY_NONE);
 
-    // Turn off FIFO's - we want to do this character by character
-    uart_set_fifo_enabled(m_uart, false);
+    // // Turn off FIFO's - we want to do this character by character
+    // uart_set_fifo_enabled(m_uart, false);
 
-    // Set UART_Handler flow control CTS/RTS, we don't want these, so turn them off
-    uart_set_hw_flow(m_uart, false, false);
-
-    // enable UART interrupt
-    uart_set_irq_enables(m_uart, true, false);
+    // // Set UART_Handler flow control CTS/RTS, we don't want these, so turn them off
+    // uart_set_hw_flow(m_uart, false, false);
 }
 
 bool UART_Handler::available()
@@ -67,6 +64,8 @@ void UART_Handler::decode_message(const uint8_t message[6])
     switch (header)
     {
         case message_headers::SET_PSU:
+            mutable_message[1] = uart_getc(m_uart);
+            mutable_message[2] = uart_getc(m_uart);
             set_psu(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -76,6 +75,8 @@ void UART_Handler::decode_message(const uint8_t message[6])
             uart_putc(m_uart, response[1]);
             break;
         case message_headers::SET_PA_ENABLE:
+            mutable_message[1] = uart_getc(m_uart);
+            mutable_message[2] = uart_getc(m_uart);
             set_pa_power_enable(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -85,6 +86,7 @@ void UART_Handler::decode_message(const uint8_t message[6])
             uart_putc(m_uart, response[1]);
             break;
         case message_headers::SET_LED_STATE:
+            mutable_message[1] = uart_getc(m_uart);
             set_led_state(mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -139,10 +141,18 @@ void UART_Handler::decode_message(const uint8_t message[6])
             uart_putc(m_uart, response[4]);
             break;
         case message_headers::SET_HARDWARE_NUMBERS:
+            mutable_message[1] = uart_getc(m_uart);
+            mutable_message[2] = uart_getc(m_uart);
+            mutable_message[3] = uart_getc(m_uart);
+            mutable_message[4] = uart_getc(m_uart);
             set_hardware_numbers(response, mutable_message);
             uart_putc(m_uart, header);
             break;
-        case message_headers::SET_SOFTWARE_NUMBERS:        
+        case message_headers::SET_SOFTWARE_NUMBERS:
+            mutable_message[1] = uart_getc(m_uart);
+            mutable_message[2] = uart_getc(m_uart);
+            mutable_message[3] = uart_getc(m_uart);
+            mutable_message[4] = uart_getc(m_uart);
             set_software_numbers(response, mutable_message);
             uart_putc(m_uart, header);
             break;
@@ -151,13 +161,13 @@ void UART_Handler::decode_message(const uint8_t message[6])
             uart_putc(m_uart, header);
             break;
         case message_headers::SET_P13V_OXCO_PIN:
+            mutable_message[1] = uart_getc(m_uart);
             set_p13v_oxco_pin(mutable_message);
             uart_putc(m_uart, header);
             break;
         default:
             break;
     }
-
 }
 
 void UART_Handler::set_psu(uint8_t data[5])
@@ -242,6 +252,9 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
 
     if ((band_mask & 1) != 0)
     {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(50);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_1.pa_power_enable();
@@ -253,6 +266,9 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 1)) != 0)
     {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(50);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_2.pa_power_enable();
@@ -264,6 +280,9 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 2)) != 0)
     {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(50);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_3.pa_power_enable();
@@ -275,6 +294,9 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 3)) != 0)
     {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(50);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_4.pa_power_enable();
@@ -286,6 +308,9 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 4)) != 0)
     {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
+        sleep_ms(50);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_5.pa_power_enable();
