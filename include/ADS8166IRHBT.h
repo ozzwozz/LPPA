@@ -17,8 +17,13 @@ public:
     /// @brief ADS8166IRHBT Class Destructor
     ~ADS8166IRHBT();
 
+    /// @brief Configure the SPI slave
+    /// @return successful configuration is true
     bool configure();
 
+    /// @brief convert the 
+    /// @param voltage_measured_by_adc 
+    /// @return 
     uint8_t convert_adc_to_deg_c(uint16_t voltage_measured_by_adc);
 
     void change_channel(const uint8_t channel);

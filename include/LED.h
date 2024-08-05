@@ -11,7 +11,7 @@ class LED
 public:
     /// @brief LED Class Constructor
     /// @param pin GPIO pin to be driven in this object
-    LED(uint pin);
+    LED(uint pin, struct repeating_timer timer);
 
     /// @brief LED Class Destructor
     ~LED();
@@ -24,7 +24,7 @@ public:
 
     /// @brief Get the state of the LED
     /// @return true if LED is on
-    bool LED_state();
+    bool LED_state() const;
 
     /// @brief Start a timer to trigger every second
     /// @return starting timer successful -> true
@@ -44,5 +44,5 @@ private:
     uint m_pin;
 
     /// @brief repeating timer structure
-    struct repeating_timer m_timer;
+    repeating_timer m_timer;
 };
