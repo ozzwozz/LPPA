@@ -252,9 +252,6 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
 
     if ((band_mask & 1) != 0)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_1.pa_power_enable();
@@ -266,9 +263,6 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 1)) != 0)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_2.pa_power_enable();
@@ -280,9 +274,6 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 2)) != 0)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_3.pa_power_enable();
@@ -294,9 +285,6 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 3)) != 0)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_4.pa_power_enable();
@@ -308,9 +296,6 @@ void UART_Handler::set_pa_power_enable(uint8_t data[5])
     }
     if ((band_mask & (1 << 4)) != 0)
     {
-        gpio_put(PICO_DEFAULT_LED_PIN, 1); // Turn LED off
-        sleep_ms(50);
-        gpio_put(PICO_DEFAULT_LED_PIN, 0); // Turn LED off
         if (power_enable)
         {
             m_psu_5.pa_power_enable();

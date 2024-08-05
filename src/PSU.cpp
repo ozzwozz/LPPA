@@ -8,8 +8,8 @@ PSU::PSU(uint power_enable_pin, uint enable_pin, LED led) : m_inhibit_pin(enable
     gpio_init(m_power_enable_pin);
     gpio_set_dir(m_power_enable_pin, GPIO_OUT);
 
-    pa_power_disable();
-    pa_shutdown();
+    // pa_power_disable();
+    // pa_shutdown();
 }
 
 PSU::~PSU()
@@ -27,7 +27,7 @@ void PSU::pa_power_enable()
 void PSU::pa_power_disable()
 {
     gpio_put(m_inhibit_pin, 1);    
-    m_led.start_timer();
+    m_led.stop_timer();
 }
 
 bool PSU::pa_status()

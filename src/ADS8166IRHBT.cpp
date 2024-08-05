@@ -2,7 +2,7 @@
 
 ADS8166IRHBT::ADS8166IRHBT(spi_inst_t* spi_inst, uint cs_pin) : SPIDevice(spi_inst, cs_pin)
 {
-    configure();
+    // configure();
 }
 
 ADS8166IRHBT::~ADS8166IRHBT()

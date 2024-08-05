@@ -72,13 +72,15 @@ int main()
 
     spi_set_format(spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
+    struct repeating_timer timer;
+
     sleep_ms(2000);
 
-    LED PA5_LED = LED(21);
-    LED PA4_LED = LED(22);
-    LED PA3_LED = LED(26);
-    LED PA2_LED = LED(27);
-    LED PA1_LED = LED(28);
+    LED PA5_LED = LED(21, timer);
+    LED PA4_LED = LED(22, timer);
+    LED PA3_LED = LED(26, timer);
+    LED PA2_LED = LED(27, timer);
+    LED PA1_LED = LED(28, timer);
 
     PSU PA1_PSU = PSU(2, 11, PA1_LED);
     PSU PA2_PSU = PSU(3, 12, PA2_LED);
